@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software or dataset, please cite it as below."
+title: "PsyAgentBench: Can Societies of Large Language Model Agents Replicate Classic Findings in Experimental Psychology?"
+authors:
+  - family-names: Bose
+    given-names: Joy
+date-released: 2026-07-23
+url: "https://github.com/joyboseroy/psyagentbench"
+license: MIT
+keywords:
+  - large language models
+  - multi-agent systems
+  - experimental psychology
+  - conformity
+  - benchmark
