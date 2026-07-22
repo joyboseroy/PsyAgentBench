@@ -16,6 +16,7 @@ import json
 import random
 import hashlib
 import time
+import re
 import urllib.error
 import urllib.request
 
@@ -33,6 +34,27 @@ class MockBackend:
                  seed: int = 0) -> str:
         h = int(hashlib.sha256(f"{user}|{seed}".encode()).hexdigest(), 16)
         rng = random.Random(h)
+
+        # Anchoring-style prompt: "more or less than {anchor}?" ... estimate
+        anchor_match = re.search(r"more or less than ([\-\d\.]+)\?", user)
+        if anchor_match:
+            anchor = float(anchor_match.group(1))
+            biased = anchor * 0.4 + rng.uniform(-anchor * 0.05, anchor * 0.05)
+            return json.dumps({"estimate": round(biased, 2)})
+
+        # Framing-style prompt: distinguish gain vs loss frame by which
+        # phrase appears first (both frames mention both "all" and "none"
+        # outcomes for the risky option, so presence alone doesn't
+        # distinguish them -- order does: gain frame states the "all saved"
+        # case first, loss frame states the "none lost" case first).
+        idx_all = user.find("probability that all")
+        idx_none = user.find("probability that none")
+        if idx_all != -1 and idx_none != -1:
+            is_gain_frame = idx_all < idx_none
+            choice = ("A" if rng.random() < (0.65 if is_gain_frame else 0.25)
+                      else "B")
+            return json.dumps({"choice": choice})
+
         # Parse the option letters and any visible majority votes from the prompt.
         options = [ln.split(")")[0].strip() for ln in user.splitlines()
                    if ln.strip()[:2] in ("A)", "B)", "C)")]
