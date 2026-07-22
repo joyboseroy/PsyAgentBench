@@ -9,9 +9,9 @@ separate genuine emergent social behavior from training-data recall of the
 paradigm itself.
 
 Dataset: [`joyboseroy/PsyAgentBench`](https://huggingface.co/datasets/joyboseroy/PsyAgentBench) (HF)
+Medium: https://joyboseroy.medium.com/i-told-an-ai-it-was-in-a-conformity-experiment-it-conformed-470b0105fcef
 
-
-## Headline findings so far (Asch conformity paradigm)
+## Headline findings so far (Asch conformity + anchoring paradigms)
 
 Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
 
@@ -39,6 +39,19 @@ Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
    most robust finding in the pilot, precisely because everything else
    varies around it. (Caveat: the persona wording overlaps lexically with
    the outcome -- see RESULTS.md for the planned ablation.)
+
+4. **Anchoring shows a strikingly different profile from conformity, in the
+   same model (gpt-oss-120B).** Anchoring on real-world facts is exactly
+   0.000 (zero, not just small) in every persona/framing cell, while
+   anchoring on invented quantities with no ground truth is near-total
+   (0.90-1.01, essentially just returning the anchor). Unlike Asch,
+   personality only mildly dampens this effect rather than eliminating it,
+   and naming the paradigm doesn't reduce it at all. Read together with the
+   conformity results: conformity in this model looks *recognition-gated*
+   (needs the model to identify the paradigm to appear at all), while
+   anchoring looks more *mechanical* (fires regardless of whether the model
+   is aware it's being tested).
+
 
 ## Repo layout
 EFFECTS.md # Design document: 14 effects, human baselines,
