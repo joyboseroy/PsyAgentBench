@@ -11,7 +11,7 @@ paradigm itself.
 Dataset: [`joyboseroy/PsyAgentBench`](https://huggingface.co/datasets/joyboseroy/PsyAgentBench) (HF)
 Medium: https://joyboseroy.medium.com/i-told-an-ai-it-was-in-a-conformity-experiment-it-conformed-470b0105fcef
 
-## Headline findings so far (Asch conformity + anchoring paradigms)
+## Headline findings so far (Asch conformity, anchoring, and framing paradigms)
 
 Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
 
@@ -52,20 +52,39 @@ Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
    anchoring looks more *mechanical* (fires regardless of whether the model
    is aware it's being tested).
 
+5. **Framing effect adds a third, distinct profile, and personality doesn't
+   just gate it -- it can flip its sign.** With no persona, framing is ~0
+   when blind and strong when named (0.62 canonical, 0.79 counterfactual --
+   the effect is *larger* on invented content than the textbook scenario,
+   arguing against simple statistic-recall). A stated low-agreeableness
+   persona doesn't dampen this effect the way it did anchoring -- it
+   reverses it entirely (-0.32 canonical, -0.46 counterfactual), the only
+   condition in the whole dataset where the model prefers the risky option
+   under gain framing. Across all three paradigms, personality's
+   relationship to induced bias turns out to be three different things:
+   elimination (conformity), mild dampening (anchoring), and reversal
+   (framing) -- not one dial with varying strength.
 
 ## Repo layout
-EFFECTS.md # Design document: 14 effects, human baselines, # agent-analogous statistics, counterfactual domains
-RESULTS.md # Findings, tables, caveats (Asch + anchoring so far)
-schema.py # HF dataset row schema (joyboseroy/PsyAgentBench) + validator
-llm.py # Backend abstraction: mock / openai-compatible / groq / anthropic
-paradigms/asch.py # Asch conformity, fully implemented (2x2 x solo x persona)
+
+```
+EFFECTS.md             # Design document: 14 effects, human baselines,
+                       # agent-analogous statistics, counterfactual domains
+RESULTS.md             # Findings, tables, caveats (Asch + anchoring + framing)
+schema.py              # HF dataset row schema (joyboseroy/PsyAgentBench) + validator
+llm.py                 # Backend abstraction: mock / openai-compatible / groq / anthropic
+paradigms/asch.py      # Asch conformity, fully implemented (2x2 x solo x persona)
 paradigms/anchoring.py # Anchoring, fully implemented (2x2 x persona, single-agent)
-run_asch.py # Asch grid runner -> JSONL (concurrent, resumable)
-run_anchoring.py # Anchoring grid runner -> JSONL (concurrent, resumable)
-analysis/prs.py # Asch conformity stats, Wilson CIs, PRS components
-analysis/anchoring.py # Anchoring index (median-based), outlier rate, PRS
-hf/ # Dataset prep + upload scripts for joyboseroy/PsyAgentBench
-data/ # Generated JSONL (not tracked in git -- see .gitignore)
+paradigms/framing.py   # Framing effect, fully implemented (2x2 x persona, single-agent)
+run_asch.py            # Asch grid runner -> JSONL (concurrent, resumable)
+run_anchoring.py       # Anchoring grid runner -> JSONL (concurrent, resumable)
+run_framing.py         # Framing grid runner -> JSONL (concurrent, resumable)
+analysis/prs.py        # Asch conformity stats, Wilson CIs, PRS components
+analysis/anchoring.py  # Anchoring index (median-based), outlier rate, PRS
+analysis/framing.py    # Framing effect (sure-rate gap), Wilson CIs, PRS
+hf/                    # Dataset prep + upload scripts for joyboseroy/PsyAgentBench
+data/                  # Generated JSONL (not tracked in git -- see .gitignore)
+```
 
 ## Quick start
 
@@ -110,16 +129,17 @@ python run_asch.py --backend groq:openai/gpt-oss-120b --seeds 20 --workers 8 \
 - [x] Schema, validator, multi-backend runner (mock/OpenAI-compatible/Groq/Anthropic)
 - [x] Asch paradigm: full 2x2xpersona grid, 3 model families, results in RESULTS.md
 - [x] Anchoring paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
-- [ ] Anchoring on Llama 8B/70B (currently gpt-oss-120B only)
+- [x] Framing effect paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
+- [ ] Anchoring and framing on Llama 8B/70B (currently gpt-oss-120B only)
 - [ ] Persona-wording ablation (behavioral phrasing, no lexical overlap with outcome)
-- [ ] Paradigm 3: bystander effect (first true multi-agent shared-channel
+- [ ] Paradigm 4: bystander effect (first true multi-agent shared-channel
       paradigm; shared-transcript harness reused for polarization/groupthink)
 - [ ] Persistent-memory harness (needed for pluralistic ignorance, groupthink)
 - [ ] Remaining paradigms per EFFECTS.md
 - [ ] Aggregate PRS across effects x models; cross-model comparison figures
-- [x] HF dataset card + upload for joyboseroy/PsyAgentBench (Asch; anchoring pending)
+- [x] HF dataset card + upload for joyboseroy/PsyAgentBench (Asch + anchoring; framing pending)
 - [ ] arXiv paper
-- [ ] Medium write-up
+- [x] Medium write-up
 
 ## Citation
 
