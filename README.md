@@ -54,14 +54,17 @@ Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
 
 
 ## Repo layout
-EFFECTS.md # Design document: 14 effects, human baselines,
-# agent-analogous statistics, counterfactual domains
-RESULTS.md # Findings, tables, caveats (Asch paradigm so far)
+EFFECTS.md # Design document: 14 effects, human baselines, # agent-analogous statistics, counterfactual domains
+RESULTS.md # Findings, tables, caveats (Asch + anchoring so far)
 schema.py # HF dataset row schema (joyboseroy/PsyAgentBench) + validator
 llm.py # Backend abstraction: mock / openai-compatible / groq / anthropic
 paradigms/asch.py # Asch conformity, fully implemented (2x2 x solo x persona)
-run_asch.py # Grid runner -> JSONL (concurrent, resumable)
-analysis/prs.py # Conformity stats, Wilson CIs, PRS components
+paradigms/anchoring.py # Anchoring, fully implemented (2x2 x persona, single-agent)
+run_asch.py # Asch grid runner -> JSONL (concurrent, resumable)
+run_anchoring.py # Anchoring grid runner -> JSONL (concurrent, resumable)
+analysis/prs.py # Asch conformity stats, Wilson CIs, PRS components
+analysis/anchoring.py # Anchoring index (median-based), outlier rate, PRS
+hf/ # Dataset prep + upload scripts for joyboseroy/PsyAgentBench
 data/ # Generated JSONL (not tracked in git -- see .gitignore)
 
 ## Quick start
@@ -106,14 +109,15 @@ python run_asch.py --backend groq:openai/gpt-oss-120b --seeds 20 --workers 8 \
 - [x] Effect -> metric mapping table (EFFECTS.md)
 - [x] Schema, validator, multi-backend runner (mock/OpenAI-compatible/Groq/Anthropic)
 - [x] Asch paradigm: full 2x2xpersona grid, 3 model families, results in RESULTS.md
+- [x] Anchoring paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
+- [ ] Anchoring on Llama 8B/70B (currently gpt-oss-120B only)
 - [ ] Persona-wording ablation (behavioral phrasing, no lexical overlap with outcome)
-- [ ] Paradigm 2: anchoring (single-agent, cheapest; validates non-group path)
 - [ ] Paradigm 3: bystander effect (first true multi-agent shared-channel
       paradigm; shared-transcript harness reused for polarization/groupthink)
 - [ ] Persistent-memory harness (needed for pluralistic ignorance, groupthink)
 - [ ] Remaining paradigms per EFFECTS.md
 - [ ] Aggregate PRS across effects x models; cross-model comparison figures
-- [ ] HF dataset card + upload script for joyboseroy/PsyAgentBench
+- [x] HF dataset card + upload for joyboseroy/PsyAgentBench (Asch; anchoring pending)
 - [ ] arXiv paper
 - [ ] Medium write-up
 
