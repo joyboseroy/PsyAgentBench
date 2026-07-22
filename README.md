@@ -8,9 +8,8 @@ Score (PRS) and a named/blind x canonical/counterfactual design built to
 separate genuine emergent social behavior from training-data recall of the
 paradigm itself.
 
-Dataset: [`joyboseroy/PsyAgentBench`](https://huggingface.co/datasets/joyboseroy/PsyAgentBench) (HF, in progress)
-Paper: arXiv (in progress)
-Write-up: Medium (in progress)
+Dataset: [`joyboseroy/PsyAgentBench`](https://huggingface.co/datasets/joyboseroy/PsyAgentBench) (HF)
+
 
 ## Headline findings so far (Asch conformity paradigm)
 
