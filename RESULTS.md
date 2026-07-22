@@ -76,8 +76,60 @@ suggestive, not conclusive -- a single paradigm and three models is not
 enough to generalize the claim, and it is the first thing later paradigms
 should try to corroborate or complicate.
 
+## 4. Anchoring paradigm
+
+Status: n=150-160 items/cell (gpt-oss-120B only so far). Anchoring index =
+median per-item (high_estimate - low_estimate)/(high_anchor - low_anchor);
+human baseline ~0.49 (Jacowitz & Kahneman 1995).
+
+| Domain | Framing | low-agreeableness | none | high-agreeableness |
+|---|---|---|---|---|
+| canonical | blind | 0.000 | 0.000 | 0.000 |
+| canonical | named | 0.000 | 0.000 | 0.000 |
+| counterfactual | blind | 0.901 | 0.951 | 0.955 |
+| counterfactual | named | 0.980 | 1.010 | 1.005 |
+
+Two findings, structurally different from the Asch results:
+
+- **Zero anchoring on grounded facts, near-total anchoring on invented
+  quantities -- and this is a genuine divergence from the human baseline**,
+  not a replication of it. Jacowitz & Kahneman found humans anchor
+  substantially (~0.49) even on general-knowledge questions where they
+  arguably have some independent basis for an estimate. Here, the model
+  shows literally 0.000 anchoring the moment it has real knowledge to draw
+  on, and near-total anchoring (0.90-1.01, i.e. essentially just returning
+  the anchor) the moment it doesn't.
+- **Personality and paradigm-naming interact with anchoring very
+  differently than they did with conformity.** low-agreeableness fully
+  eliminated conformity in every Asch cell; here it only mildly dampens the
+  anchoring index (0.901 vs 0.951-0.955 blind). And naming the paradigm was
+  *necessary* to produce conformity at all in Asch, but here naming doesn't
+  reduce anchoring -- if anything it nudges the index slightly higher
+  (0.951->1.010, none persona). Read together: conformity in this model
+  looks recognition-gated (requires identifying the paradigm to appear at
+  all), while anchoring looks more mechanical/automatic (fires regardless of
+  whether the model is aware it's being tested, and isn't reduced by that
+  awareness). This is worth treating as a real finding about how different
+  biases are represented, not just two versions of the same phenomenon.
+- **A stable ~3-4% "wild guess" outlier rate** appears only in the
+  counterfactual domain, consistent across persona and framing: instead of
+  anchoring, the model occasionally rejects an implausibly small anchor
+  (e.g. ~100-200 invented units) and produces an estimate many orders of
+  magnitude larger (seen up to ~9e15). This looks like a distinct
+  anchor-rejection failure mode rather than noise, and is reported
+  separately (median, not mean, is used for the headline index specifically
+  because a plain mean is not robust to these outliers).
+- Two cells (named+none, named+high-agreeableness) sit just over the PRS
+  magnitude band's 2.0x cutoff (ratios ~2.01-2.06x human baseline) --
+  treated as boundary cases, not strong claims of overshoot, given how
+  close they sit to the threshold.
+
 ## Caveats and planned follow-ups
 
+- **Anchoring results are gpt-oss-120B only so far.** Unlike Asch, the
+  anchoring paradigm hasn't yet been run on Llama 8B/70B -- worth doing
+  before treating the recognition-gated-vs-mechanical contrast between the
+  two paradigms as more than a single-model observation.
 - **Persona wording overlaps lexically with the outcome.** The
   low-agreeableness prompt includes "comfortable disagreeing with others";
   the high-agreeableness prompt includes "value group harmony." It is not
