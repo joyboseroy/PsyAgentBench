@@ -65,6 +65,24 @@ Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
    elimination (conformity), mild dampening (anchoring), and reversal
    (framing) -- not one dial with varying strength.
 
+6. **Sunk cost is a clean, fully robust null** -- 0.000 across every
+   persona, domain, and framing (n=160/cell). The stimulus states plainly
+   that continuing has poor prospects; the model weighs that consistently
+   regardless of whether prior investment is mentioned, in clear contrast
+   to the human ~35pp effect. Not induced, not domain-dependent, not
+   persona-gated -- just absent.
+
+7. **In-group favoritism's real story is refusal, not the favoritism
+   index.** The model explicitly declines the allocation task ("I'm sorry,
+   but I can't comply with that") 5-12x more often with no stated
+   personality than with either an agreeable or disagreeable persona
+   (e.g. 23.8% vs 2.5%/1.9% refusal, canonical-named). Any stated
+   personality, regardless of direction, makes the model far more willing
+   to engage with the task at all. The favoritism index itself (computed
+   only on non-refusing responses) shows low-agreeableness dampening but
+   not eliminating favoritism -- but should be read cautiously given the
+   refusal-driven selection effect on the sample.
+
 ## Repo layout
 
 ```
@@ -76,6 +94,11 @@ llm.py                 # Backend abstraction: mock / openai-compatible / groq / 
 paradigms/asch.py      # Asch conformity, fully implemented (2x2 x solo x persona)
 paradigms/anchoring.py # Anchoring, fully implemented (2x2 x persona, single-agent)
 paradigms/framing.py   # Framing effect, fully implemented (2x2 x persona, single-agent)
+paradigms/sunk_cost.py     # Sunk cost, single-agent, paired sunk/nosunk condition
+paradigms/ingroup.py       # In-group favoritism, single-agent, minimal-group design
+run_paradigm.py            # Generic runner for sunk_cost/reciprocity/false_consensus/ingroup
+analysis/sunk_cost.py      # Sunk cost effect (proportion difference), PRS
+analysis/ingroup.py        # Favoritism index, refusal-rate tracking (distinct from parse fails), PRS
 run_asch.py            # Asch grid runner -> JSONL (concurrent, resumable)
 run_anchoring.py       # Anchoring grid runner -> JSONL (concurrent, resumable)
 run_framing.py         # Framing grid runner -> JSONL (concurrent, resumable)
@@ -130,6 +153,10 @@ python run_asch.py --backend groq:openai/gpt-oss-120b --seeds 20 --workers 8 \
 - [x] Asch paradigm: full 2x2xpersona grid, 3 model families, results in RESULTS.md
 - [x] Anchoring paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
 - [x] Framing effect paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
+- [x] Framing effect paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
+- [x] Sunk cost paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
+- [x] In-group favoritism paradigm: full 2x2xpersona grid (gpt-oss-120B), refusal-rate finding, results in RESULTS.md
+- [ ] Reciprocity, false consensus: implemented but need design fixes before results are meaningful (see RESULTS.md caveats)
 - [ ] Anchoring and framing on Llama 8B/70B (currently gpt-oss-120B only)
 - [ ] Persona-wording ablation (behavioral phrasing, no lexical overlap with outcome)
 - [ ] Paradigm 4: bystander effect (first true multi-agent shared-channel
