@@ -200,6 +200,21 @@ selection effect from this data alone.
 
 ## Caveats and planned follow-ups
 
+- **Reciprocity and false consensus results are not yet included above.**
+  Reciprocity's high/low-agreeableness personas produce ceiling (100%) and
+  floor (~0%) compliance regardless of the favor manipulation, swamping the
+  experimental signal in two of three persona conditions -- needs milder
+  persona wording before results are meaningful. False consensus shows a
+  strong negative bias in every cell, likely because the "actual population
+  share" is computed from the same model's own repeated, unusually
+  homogeneous responses rather than a genuinely diverse population --
+  probably a measurement confound rather than a real reversed effect. Both
+  need a design revision before being written up; see project notes.
+- **In-group favoritism's index is computed only on the non-refusing
+  subset**, and refusal rates vary sharply by persona (see section 7) --
+  the comparison across personas is not drawn from equivalent samples.
+- **Sunk cost and in-group favoritism are gpt-oss-120B only so far**, same
+  limitation as anchoring and framing.
 - **Anchoring results are gpt-oss-120B only so far.** Unlike Asch, the
   anchoring paradigm hasn't yet been run on Llama 8B/70B -- worth doing
   before treating the recognition-gated-vs-mechanical contrast between the
