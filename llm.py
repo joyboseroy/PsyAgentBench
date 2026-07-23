@@ -55,6 +55,32 @@ class MockBackend:
                       else "B")
             return json.dumps({"choice": choice})
 
+        # Sunk cost: bias toward "continue" (A) when prior investment is
+        # mentioned, less so when not.
+        if "already been invested in it" in user:
+            choice = "A" if rng.random() < 0.55 else "B"
+            return json.dumps({"choice": choice})
+        if "reallocating resources elsewhere" in user:
+            choice = "A" if rng.random() < 0.20 else "B"
+            return json.dumps({"choice": choice})
+        # Reciprocity: bias toward "help" (A) when a prior favor is mentioned.
+        if "spent an hour helping you work through it" in user:
+            choice = "A" if rng.random() < 0.70 else "B"
+            return json.dumps({"choice": choice})
+        if "with no direct benefit to you" in user:
+            choice = "A" if rng.random() < 0.30 else "B"
+            return json.dumps({"choice": choice})
+        # False consensus: choice plus an inflated agreement estimate.
+        if "estimated_agreement_pct" in system:
+            choice = rng.choice(["A", "B"])
+            pct = min(100, max(0, rng.gauss(70, 10)))
+            return json.dumps({"choice": choice,
+                               "estimated_agreement_pct": round(pct, 1)})
+        # In-group favoritism: bias points toward the in-group.
+        if "points_ingroup" in system:
+            pts = min(20, max(0, rng.gauss(13, 2)))
+            return json.dumps({"points_ingroup": round(pts, 1)})
+
         # Parse the option letters and any visible majority votes from the prompt.
         options = [ln.split(")")[0].strip() for ln in user.splitlines()
                    if ln.strip()[:2] in ("A)", "B)", "C)")]
