@@ -124,6 +124,80 @@ Two findings, structurally different from the Asch results:
   treated as boundary cases, not strong claims of overshoot, given how
   close they sit to the threshold.
 
+## 6. Sunk cost paradigm
+
+Status: n=160 items/cell (gpt-oss-120B only). Sunk cost effect = P(continue |
+prior investment mentioned) - P(continue | not mentioned); human baseline
+~0.35 (Sleesman 2012 meta, ~30-40pp).
+
+| Domain | Framing | high-agreeableness | none | low-agreeableness |
+|---|---|---|---|---|
+| canonical | blind | 0.000 | 0.000 | 0.000 |
+| canonical | named | 0.000 | 0.000 | 0.006 |
+| counterfactual | blind | 0.000 | 0.000 | -0.013 |
+| counterfactual | named | 0.000 | 0.000 | -0.019 |
+
+**A clean, fully robust null across every persona, domain, and framing.**
+The two nonzero entries (0.006, -0.013, -0.019) are single-response noise at
+n=160 -- not a real effect in either direction. Unlike anchoring and
+framing, naming the paradigm doesn't induce any sunk-cost behavior here,
+and no persona moves it either. Every stimulus explicitly states that
+continuing has "only a modest chance of success" while abandoning is "more
+cost-effective going forward" -- the model appears to weigh this forward-
+looking information consistently and correctly, regardless of whether prior
+investment is mentioned, in clear contrast to the human ~35pp effect. This
+is the most unambiguous divergence-from-human-baseline result in the
+benchmark so far: not induced, not domain-dependent, not persona-gated --
+just absent.
+
+## 7. In-group favoritism paradigm
+
+Status: n=122-160 non-refused items/cell (gpt-oss-120B only). Favoritism
+index = mean (points_ingroup - points_outgroup) / 20, per trial; human
+baseline ~0.35 (Balliet 2014 meta, treated as an approximate proportion-scale
+figure -- see caveat below).
+
+| Domain | Framing | high-agreeableness | none | low-agreeableness |
+|---|---|---|---|---|
+| canonical | blind | 0.017 | 0.035 | 0.024 |
+| canonical | named | 0.248 | 0.215 | 0.083 |
+| counterfactual | blind | 0.003 | 0.000 | -0.004 |
+| counterfactual | named | 0.134 | 0.146 | 0.080 |
+
+**Refusal rate is the headline finding here, not the favoritism index.**
+The model explicitly declines to allocate resources by group ("I'm sorry,
+but I can't comply with that") at rates that vary enormously by persona,
+independent of the favoritism question itself:
+
+| Domain | Framing | high-agreeableness | none | low-agreeableness |
+|---|---|---|---|---|
+| canonical | blind | 0.0% | 14.4% | 3.1% |
+| canonical | named | 2.5% | **23.8%** | 1.9% |
+| counterfactual | blind | 1.9% | **19.4%** | 4.4% |
+| counterfactual | named | 3.8% | 10.0% | 3.8% |
+
+The "none" persona refuses 5-12x more often than either explicit persona,
+in every cell. Answering with a stated personality -- agreeable or
+disagreeable, it doesn't matter which -- makes the model dramatically more
+willing to engage with an in-group/out-group allocation task than answering
+as itself with no persona framing at all. This held up cleanly at full
+scale (n=160/cell) after a bug fix: refusals were initially misclassified
+as generic parse failures because the real refusal text used curly Unicode
+apostrophes that didn't match an ASCII marker list; after normalizing quote
+characters, `fails` dropped to ~0 in every cell and the true refusal counts
+above emerged.
+
+On the favoritism index itself: low-agreeableness dampens it (0.083 vs
+0.215-0.248 for canonical-named) without eliminating it, similar to how it
+behaved for anchoring rather than the complete elimination seen for Asch
+conformity. But this number should be read cautiously -- it's computed only
+on the non-refusing subset, and since refusal rates differ so much by
+persona and condition, the subset each cell's index is drawn from isn't a
+like-for-like comparison. A persona/condition with a high refusal rate may
+be filtering out exactly the responses that would have shown the strongest
+(or weakest) favoritism, and there's no way to know the direction of that
+selection effect from this data alone.
+
 ## Caveats and planned follow-ups
 
 - **Anchoring results are gpt-oss-120B only so far.** Unlike Asch, the
