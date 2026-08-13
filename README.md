@@ -83,6 +83,32 @@ Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
    not eliminating favoritism -- but should be read cautiously given the
    refusal-driven selection effect on the sample.
 
+8. Bystander effect is a second clean null, alongside sunk cost -- helping
+   sits at ceiling (93-100%) regardless of whether the model believes
+   other bystanders are aware, in every domain, label, and persona
+   condition tested.
+
+9. Authority/obedience is the most tightly gated effect in the benchmark.
+   Compliance with a borderline authority-instructed action is exactly
+   zero everywhere except one persona, and even there it roughly triples
+   when the paradigm is explicitly named (11.8% blind to 38.6% named,
+   canonical; 9.8% to 44.9%, counterfactual) -- the effect needs both
+   ingredients, persona and label, at once.
+
+10. Social loafing shows a fourth kind of persona relationship: rather
+    than eliminating, dampening, or reversing an effect, low-agreeableness
+    *reveals* one that's otherwise invisible under ceiling. Under no
+    persona or high-agreeableness the model sits at 98-100% maximal
+    effort regardless of individual vs. group accountability; under
+    low-agreeableness a real, label-indifferent gap appears (+0.23 to
+    +0.27 across all four domain/label cells).
+
+11. Pluralistic ignorance produces a real but small effect confined to
+    exactly one persona-by-label cell per domain (none persona, named
+    condition only) -- outside that cell the two explicit personas
+    saturate to their own ceiling/floor and the public/private
+    manipulation has nothing left to move.
+
 ## Repo layout
 
 ```
