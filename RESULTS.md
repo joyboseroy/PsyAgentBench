@@ -124,6 +124,45 @@ Two findings, structurally different from the Asch results:
   treated as boundary cases, not strong claims of overshoot, given how
   close they sit to the threshold.
 
+## 5. Framing effect paradigm
+
+Status: n=154-160/cell (gpt-oss-120B only). Framing effect = P(choose sure
+option | gain frame) - P(choose sure option | loss frame); human baseline
+~0.50 (Tversky & Kahneman 1981, the Asian disease problem).
+
+| Domain | Framing | low-agreeableness | none | high-agreeableness |
+|---|---|---|---|---|
+| canonical | blind | 0.037 | 0.020 | 0.013 |
+| canonical | named | -0.319 | 0.619 | 0.562 |
+| counterfactual | blind | -0.144 | 0.019 | 0.037 |
+| counterfactual | named | -0.456 | 0.787 | 0.537 |
+
+**Framing shares Asch's need for naming but not its domain profile.** Blind,
+the framing effect is essentially zero for none and high-agreeableness --
+both frames sit at ceiling for the sure option, gain and loss alike. Named,
+a real effect appears: 0.619 canonical, 0.787 counterfactual (none
+persona) -- both comparable to or exceeding the human ~0.50 baseline. The
+counterfactual effect being *larger* than canonical is the opposite of
+what simple textbook-statistic recall predicts, and argues for something
+closer to demand-characteristics behavior: once the model recognizes it is
+being tested for framing sensitivity, it produces a fresh, even amplified
+gain-loss asymmetry on content it cannot have memorized verbatim.
+
+**low-agreeableness does not dampen this effect the way it dampened
+anchoring -- it reverses it.** Named, low-agreeableness produces -0.319
+canonical and -0.456 counterfactual: the model now prefers the risky
+option under gain framing, the only condition in the dataset where this
+happens. Blind, low-agreeableness also destabilizes the baseline itself,
+collapsing both frames from ceiling to near 50% -- a disruption of the
+default preference for the sure option that exists independently of any
+framing manipulation.
+
+Three distinct persona-effect relationships are now on the table across
+three paradigms: low-agreeableness eliminates conformity (Section 2),
+mildly dampens anchoring (Section 4), and reverses framing (here). This is
+worth treating as a structural finding in its own right, not three
+readings of one underlying dial.
+
 ## 6. Sunk cost paradigm
 
 Status: n=160 items/cell (gpt-oss-120B only). Sunk cost effect = P(continue |
@@ -198,6 +237,157 @@ be filtering out exactly the responses that would have shown the strongest
 (or weakest) favoritism, and there's no way to know the direction of that
 selection effect from this data alone.
 
+## 8. Bystander effect paradigm
+
+Status: n=20 seeds, n=280-320 items/cell (gpt-oss-120B only). Bystander
+effect = P(help | alone) - P(help | bystanders present); human baseline
+~0.20-0.25 decrease in helping with bystanders present (Latane & Nida
+1981 meta-analysis).
+
+| Domain | Label | high-agree. | none | low-agree. |
+|---|---|---|---|---|
+| canonical | blind | +0.000 | +0.000 | -0.037 |
+| canonical | named | +0.000 | +0.000 | +0.019 |
+| counterfactual | blind | +0.000 | +0.000 | -0.037 |
+| counterfactual | named | +0.000 | +0.000 | -0.081 |
+
+**A second robust absence, alongside sunk cost.** Helping sits at ceiling
+(93-100%) in every cell regardless of domain, label, or persona; the
+model helps almost always whether or not it believes other bystanders
+are also aware. No label or persona manipulation induces anything
+resembling the human bystander effect. The one partial exception is
+low-agreeableness, which shows small negative (i.e. reversed-direction)
+effects in three of four domain-by-label cells, reaching -0.081 in the
+counterfactual-named cell; at n=320 the counterfactual-named gap
+(93.1% alone vs 99.1% bystanders, non-overlapping 95% CIs) is real but
+small, and isolated to a single persona. We do not read this as a
+genuine reversed bystander effect so much as low-agreeableness mildly
+destabilizing an otherwise near-total ceiling, the same kind of
+ceiling-disruption low-agreeableness produced for the framing blind
+baseline (Section 5). Unlike sunk cost, where the null is uniform across
+every manipulation, this one has a small, real wrinkle under one
+persona that a transcript read would help explain.
+
+## 9. Authority/obedience paradigm
+
+Status: n=20 seeds, n=305-320 items/cell (gpt-oss-120B only). Obedience
+effect = P(comply | authority instructs) - P(comply | self-directed);
+human baseline is an approximate transfer estimate from the classic
+shock-paradigm literature (Milgram 1963; Burger 2009 partial
+replication, ~65-70% obedience), not a direct replication baseline,
+since our design is a harmless-costly workplace-compliance analog
+rather than the original paradigm.
+
+| Domain | Label | high-agree. | none | low-agree. |
+|---|---|---|---|---|
+| canonical | blind | +0.118 | +0.000 | +0.000 |
+| canonical | named | +0.386 | +0.000 | +0.000 |
+| counterfactual | blind | +0.098 | +0.000 | +0.000 |
+| counterfactual | named | +0.449 | +0.000 | +0.000 |
+
+**Doubly gated: the effect needs both the label and the persona at
+once.** With no persona or with low-agreeableness, compliance with the
+authority-instructed borderline action is exactly zero in every domain
+and label cell (upper 95% CI bound ~1.2% throughout, n=310-320), a
+floor as clean as the sunk cost null. Under high-agreeableness alone,
+something appears, but it is far stronger once the paradigm is named:
+raw compliance under the authority condition rises from 11.8% [7.6,17.9]
+blind to 38.6% [31.4,46.4] named on canonical items, and from 9.8%
+[6.0,15.5] blind to 44.9% [37.3,52.7] named on counterfactual items,
+generalizing cleanly across domains in both label conditions. Neither
+ingredient alone is sufficient: authority instruction with no persona
+produces nothing, and high-agreeableness with no authority instruction
+(the noauthority condition, not tabulated separately here since it is
+uniformly at floor) also produces nothing. This is the most tightly
+gated effect in the benchmark, requiring the conjunction of a specific
+persona and explicit paradigm labeling, and is directionally the
+reverse of what a simple "LLMs are obedient to authority" story would
+predict: obedience here is the exception produced by two specific
+conditions holding simultaneously, not a standing disposition.
+
+Refusal rates are low throughout (0.0-3.4%) but track the same cell:
+authority+high-agreeableness shows the highest refusal alongside the
+highest compliance (3.1% canonical, 3.4% counterfactual), both higher
+than the same persona's noauthority refusal rate (1.6%, 2.5%). Under
+authority and high-agreeableness, the "stop and flag" middle option
+loses ground to both terminal responses, compliance and refusal alike.
+
+## 10. Social loafing paradigm
+
+Status: n=20 seeds, n=313-320 items/cell (gpt-oss-120B only). Social
+loafing effect = P(maximal effort | individual accountability) -
+P(maximal effort | group accountability); human baseline ~0.20,
+approximate translation of Karau & Williams' (1993) meta-analytic
+d ~ 0.44 onto a binary effort choice.
+
+| Domain | Label | high-agree. | none | low-agree. |
+|---|---|---|---|---|
+| canonical | blind | +0.006 | +0.000 | +0.231 |
+| canonical | named | +0.000 | +0.037 | +0.225 |
+| counterfactual | blind | +0.000 | +0.000 | +0.262 |
+| counterfactual | named | +0.000 | +0.000 | +0.269 |
+
+**Persona reveals the effect rather than gating it.** High-agreeableness
+and no-persona both sit at ceiling (0.98-1.00 maximal-effort rate) in
+every domain and label cell, masking any possible loafing signal
+entirely; there is simply no room left for a group-versus-individual
+gap to show up. Low-agreeableness breaks the ceiling and, once it does,
+a clean, label-insensitive, domain-generalizing effect appears: +0.231
+to +0.269 across all four domain-by-label cells, comparable to or
+somewhat larger than the intended human baseline. Unlike conformity,
+framing, or the two paradigms above, naming the paradigm does close to
+nothing here (canonical +0.225 named vs +0.231 blind; counterfactual
++0.269 named vs +0.262 blind), so this effect is real, persona-gated,
+and label-indifferent, a distinct fourth relationship between persona
+and effect expression alongside elimination (conformity), dampening
+(anchoring, favoritism), and reversal (framing): here persona
+elimination of a ceiling effect is what makes the underlying effect
+visible at all, rather than persona introducing or removing the effect
+itself. One coincidence worth flagging rather than over-reading: the
+low-agreeableness group-condition rate is numerically identical
+(172/320) in both canonical and counterfactual domains; whether this
+reflects the group condition being unusually insensitive to domain
+content or is simply chance at this n is not something we can
+distinguish without more items or seeds.
+
+## 11. Pluralistic ignorance paradigm
+
+Status: n=20 seeds, n=159-320 items/cell (gpt-oss-120B only).
+Pluralistic-ignorance effect = P(state private view | private) -
+P(state private view | public); human baseline ~0.20-0.30, approximate,
+drawn from the private-versus-public dissent gap literature (Miller &
+McFarland 1987; Prentice & Miller 1993).
+
+| Domain | Label | high-agree. | none | low-agree. |
+|---|---|---|---|---|
+| canonical | blind | +0.000 | +0.000 | +0.000 |
+| canonical | named | +0.000 | +0.131 | +0.000 |
+| counterfactual | blind | +0.006 | +0.000 | +0.000 |
+| counterfactual | named | +0.006 | +0.075 | +0.000 |
+
+**A real but small effect, gated by label and persona simultaneously,
+in the opposite persona from social loafing's gate.** Both explicit
+personas saturate to their own extreme regardless of any manipulation:
+high-agreeableness sits near 0% stating its private view in every cell
+(near-total conformity), low-agreeableness sits at exactly 100% in
+every cell (near-total honesty), and neither leaves any room for the
+private-versus-public axis to matter. Only the no-persona condition
+shows a gap, and only when the paradigm is named: blind, private and
+public are statistically identical at ceiling (100% both, canonical and
+counterfactual alike); named, private stays near ceiling (99.4%
+[96.5,99.9] canonical, 98.1% [94.6,99.4] counterfactual) while public
+drops measurably, to 86.3% [80.1,90.7] canonical and 90.6% [85.1,94.2]
+counterfactual, non-overlapping confidence intervals in both domains.
+The resulting effect, +0.131 canonical and +0.075 counterfactual, is
+correctly signed but well below the ~0.20-0.30 human baseline, and it
+exists in exactly one of twelve persona-by-label-by-domain cells per
+domain. This is not the same failure mode as reciprocity's persona
+dominance: the manipulation does produce a genuine, label-gated,
+statistically real effect, but only within a single persona condition,
+and a naive analysis that pooled across personas would have reported an
+effect roughly half this size and entirely missed that it comes from
+one cell rather than being a general property of the paradigm.
+
 ## Caveats and planned follow-ups
 
 - **Reciprocity and false consensus results are not yet included above.**
@@ -242,3 +432,17 @@ selection effect from this data alone.
   across models. The net-effect calculation (conformity rate minus solo
   error rate) partially controls for this but does not fully rule out an
   ability confound in the domain-generalization comparison above.
+  - **Authority/obedience has no genuine replication baseline.** The
+  ~65-70pp figure cited is transferred from Milgram's shock paradigm
+  and Burger's partial replication, not measured on any text-based
+  workplace-compliance analog; treat the human comparison as
+  directional context only, not a target the model should be expected
+  to hit.
+- **Pluralistic ignorance's effect is confirmed in exactly one
+  persona-by-label cell per domain (none, named).** Aggregating across
+  personas or across label conditions would understate or entirely
+  miss it; any summary statistic for this paradigm should be reported
+  at the none/named cell specifically, not pooled.
+- **Bystander effect, social loafing, and authority/obedience are all
+  gpt-oss-120B only**, same limitation already noted for the first five
+  paradigms.
