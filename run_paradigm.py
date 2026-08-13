@@ -30,8 +30,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from llm import get_backend
 from schema import validate
 
-PARADIGMS = ("sunk_cost", "reciprocity", "false_consensus", "ingroup")
-
+PARADIGMS = ("sunk_cost", "reciprocity", "false_consensus", "ingroup",
+             "bystander_effect", "authority_obedience", "social_loafing",
+             "pluralistic_ignorance")
 
 def load_paradigm(name):
     if name not in PARADIGMS:
