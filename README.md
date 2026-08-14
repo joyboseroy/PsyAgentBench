@@ -109,6 +109,26 @@ Full methodology and numbers in [RESULTS.md](RESULTS.md). Summary:
     saturate to their own ceiling/floor and the public/private
     manipulation has nothing left to move.
 
+12. Risky shift (the first paradigm on the new multi-agent harness) shows
+    a real, robust convergence effect under no persona (+0.53, generalizing
+    across domain and label), and the first sign in the whole benchmark of
+    naming a paradigm *suppressing* rather than inducing an effect: under
+    high-agreeableness, the shift is real when blind but weakens to zero
+    when named. A methodological caveat qualifies the whole paradigm,
+    though: only 13% of trials show genuine extremification beyond the
+    initial group's range: 74% is pure convergence, not classical
+    risky-shift polarization.
+
+13. Groupthink required a mid-project design fix: the project-wide
+    low-agreeableness persona wording ("comfortable disagreeing with
+    others") nearly paraphrased this paradigm's own outcome variable.
+    After reworking the persona language, low-agreeableness is still a
+    total, zero-variance ceiling (100% objection-raising in every cell) --
+    confirming a construct-level overlap, not a wording bug. The
+    directive-vs-neutral leadership manipulation only has room to operate
+    under high-agreeableness, and even there is domain-inconsistent:
+    clearly real in one cell (10% to 57%), weak-to-null in the rest.
+
 ## Repo layout
 
 ```
@@ -122,15 +142,24 @@ paradigms/anchoring.py # Anchoring, fully implemented (2x2 x persona, single-age
 paradigms/framing.py   # Framing effect, fully implemented (2x2 x persona, single-agent)
 paradigms/sunk_cost.py     # Sunk cost, single-agent, paired sunk/nosunk condition
 paradigms/ingroup.py       # In-group favoritism, single-agent, minimal-group design
+paradigms/bystander_effect.py       # Bystander effect / diffusion of responsibility
+paradigms/authority_obedience.py    # Authority/obedience, harmless-costly analog
+paradigms/social_loafing.py         # Social loafing, individual vs group accountability
+paradigms/pluralistic_ignorance.py  # Pluralistic ignorance, private vs public dissent
+paradigms_multiagent/risky_shift.py    # Risky shift, real peer agents, round0 baseline + discussion
+paradigms_multiagent/polarization.py   # Group polarization, same harness as risky_shift
+paradigms_multiagent/groupthink.py     # Groupthink, scripted leader + sequential real peer cascade
 run_paradigm.py            # Generic runner for sunk_cost/reciprocity/false_consensus/ingroup
-analysis/sunk_cost.py      # Sunk cost effect (proportion difference), PRS
-analysis/ingroup.py        # Favoritism index, refusal-rate tracking (distinct from parse fails), PRS
 run_asch.py            # Asch grid runner -> JSONL (concurrent, resumable)
 run_anchoring.py       # Anchoring grid runner -> JSONL (concurrent, resumable)
 run_framing.py         # Framing grid runner -> JSONL (concurrent, resumable)
-analysis/prs.py        # Asch conformity stats, Wilson CIs, PRS components
+reclassify.py                       # Reprocess final_decision from stored agent_response after a parse_choice fix, no API calls
+run_multiagent.py                   # Generic runner for multi-agent, multi-round paradigms
+analysis/sunk_cost.py      # Sunk cost effect (proportion difference), PRS
+analysis/ingroup.py        # Favoritism index, refusal-rate tracking (distinct from parse fails), PRS
 analysis/anchoring.py  # Anchoring index (median-based), outlier rate, PRS
 analysis/framing.py    # Framing effect (sure-rate gap), Wilson CIs, PRS
+analysis/prs.py        # Asch conformity stats, Wilson CIs, PRS components
 hf/                    # Dataset prep + upload scripts for joyboseroy/PsyAgentBench
 data/                  # Generated JSONL (not tracked in git -- see .gitignore)
 ```
@@ -153,6 +182,14 @@ python analysis/prs.py data/asch_gptoss120b_full.jsonl
 python run_asch.py --backend groq:openai/gpt-oss-120b --seeds 20 --workers 8 \
     --personalities none high-agreeableness low-agreeableness \
     --out data/asch_gptoss120b_full.jsonl --resume
+
+# multi-agent paradigms (risky_shift, polarization, groupthink)
+python run_multiagent.py --paradigm risky_shift --backend mock --seeds 3 \
+    --out data/risky_shift_mock.jsonl
+python run_multiagent.py --paradigm risky_shift \
+    --backend groq:openai/gpt-oss-120b --seeds 10 --workers 4 \
+    --personalities none high-agreeableness low-agreeableness \
+    --out data/risky_shift_gptoss120b_full.jsonl
 ```
 
 ## Design decisions (full detail in EFFECTS.md)
@@ -164,11 +201,11 @@ python run_asch.py --backend groq:openai/gpt-oss-120b --seeds 20 --workers 8 \
    confederate-behavior variance).
 3. PRS = 0.5 x direction_match + 0.5 x magnitude_match, magnitude band
    [0.5x, 2.0x] of the human baseline on the natural scale of each effect.
-4. The obedience paradigm (planned) uses a harmless-costly analog -- no harm
-   content is ever generated.
-5. 14 effects targeted, not 20: Stanford Prison and induced-compliance
+4. The obedience paradigm uses a harmless-costly analog -- no harm content
+   is ever generated. Completed: see RESULTS.md Section 9.
+6. 14 effects targeted, not 20: Stanford Prison and induced-compliance
    dissonance excluded with reasons documented in EFFECTS.md.
-6. Personality manipulation uses Big-Five-style persona prompts; an ablation
+7. Personality manipulation uses Big-Five-style persona prompts; an ablation
    with behaviorally-phrased (non-lexically-overlapping) personas is planned
    to separate trait simulation from simple instruction-following.
 
@@ -179,19 +216,22 @@ python run_asch.py --backend groq:openai/gpt-oss-120b --seeds 20 --workers 8 \
 - [x] Asch paradigm: full 2x2xpersona grid, 3 model families, results in RESULTS.md
 - [x] Anchoring paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
 - [x] Framing effect paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
-- [x] Framing effect paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
 - [x] Sunk cost paradigm: full 2x2xpersona grid (gpt-oss-120B), results in RESULTS.md
 - [x] In-group favoritism paradigm: full 2x2xpersona grid (gpt-oss-120B), refusal-rate finding, results in RESULTS.md
+- [x] Bystander effect, authority/obedience, social loafing, pluralistic ignorance: full 2x2xpersona grids (gpt-oss-120B), results in RESULTS.md
+- [x] Multi-agent harness (run_multiagent.py): round-based deliberation with real peer agents, resumable
+- [x] Risky shift paradigm: full grid (gpt-oss-120B), first multi-agent paradigm, results in RESULTS.md
+- [x] Groupthink paradigm: full grid (gpt-oss-120B), persona-wording fix mid-project, results in RESULTS.md
+- [ ] Group polarization: pilot complete, full n=10 grid pending
 - [ ] Reciprocity, false consensus: implemented but need design fixes before results are meaningful (see RESULTS.md caveats)
 - [ ] Anchoring and framing on Llama 8B/70B (currently gpt-oss-120B only)
-- [ ] Persona-wording ablation (behavioral phrasing, no lexical overlap with outcome)
+- [ ] Persona-wording ablation (behavioral phrasing, no lexical overlap with outcome) -- groupthink's mid-project fix is a partial, paradigm-specific version of this
 - [ ] Paradigm 4: bystander effect (first true multi-agent shared-channel
       paradigm; shared-transcript harness reused for polarization/groupthink)
 - [ ] Persistent-memory harness (needed for pluralistic ignorance, groupthink)
 - [ ] Remaining paradigms per EFFECTS.md
 - [ ] Aggregate PRS across effects x models; cross-model comparison figures
-- [x] HF dataset card + upload for joyboseroy/PsyAgentBench (Asch + anchoring; framing pending)
-- [ ] arXiv paper
+- [x] HF dataset card + upload for joyboseroy/PsyAgentBench (9 completed paradigms, 57,264 trials)
 - [x] Medium write-up
 
 ## Citation
