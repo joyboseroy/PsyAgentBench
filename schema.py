@@ -10,7 +10,6 @@ import json
 import time
 import uuid
 
-
 @dataclass
 class ObservationRow:
     # --- identity ---
@@ -27,6 +26,8 @@ class ObservationRow:
     personality: str = "none"          # "none" | big-five persona key
     memory: str = "stateless"          # "stateless" | "persistent"
     group_composition: str = ""        # e.g. "1_target_5_confederates"
+    round: int = 0                     # discussion round, 0 = pre-discussion baseline
+    agent_index: int = 0               # which of N agents in a multi-agent group this row is
 
     # --- agent + stimulus ---
     agent_role: str = ""               # "target" | "confederate" | "peer" | "supervisor"
