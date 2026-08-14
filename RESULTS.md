@@ -388,6 +388,125 @@ and a naive analysis that pooled across personas would have reported an
 effect roughly half this size and entirely missed that it comes from
 one cell rather than being a general property of the paradigm.
 
+## 12. Risky shift paradigm (multi-agent)
+
+Status: n=10 seeds, n=40 trials/persona pooled across domain and label
+(gpt-oss-120B only). First paradigm run on the new multi-agent harness:
+4 real peer agents independently state a threshold on round 0, then see
+a full transcript of every agent's position and reasoning (including
+their own, explicitly marked) before restating on round 1. Risky shift
+= mean(round0 threshold) - mean(round1 threshold), on a 1-9 scale where
+1 means "would recommend the risky option even at 10% success
+probability" and 9 means "only at 90%+"; positive = the group became
+more risk-tolerant after discussion. Human baseline ~1.5 scale points,
+approximate (Stoner 1961; Isenberg 1986 meta-analysis of group
+polarization, d ~ 0.64).
+
+| Domain | Label | high-agree. | none | low-agree. |
+|---|---|---|---|---|
+| canonical | blind | +0.475 [+0.28,+0.67] | +0.625 [+0.42,+0.83] | +0.150 [-0.31,+0.61] |
+| canonical | named | +0.100 [-0.01,+0.21] | +0.425 [+0.28,+0.57] | -0.075 [-0.32,+0.17] |
+| counterfactual | blind | +0.200 [+0.06,+0.34] | +0.550 [+0.32,+0.78] | -0.025 [-0.25,+0.20] |
+| counterfactual | named | -0.050 [-0.24,+0.14] | +0.525 [+0.37,+0.68] | -0.300 [-0.49,-0.11] |
+
+Pooled by persona: high-agreeableness +0.181 [0.082,0.280], none +0.531
+[0.438,0.624], low-agreeableness -0.062 [-0.214,0.089].
+
+**A real, robust effect under no persona, and a first sign that naming
+the paradigm can suppress rather than induce an effect.** None shows a
+positive, domain-and-label-generalizing shift in every cell (CIs
+excluding zero throughout), the cleanest result in this paradigm.
+High-agreeableness shows a real effect too, but only blind (canonical
++0.475, counterfactual +0.200, both excluding zero); naming the paradigm
+weakens it toward zero in both domains (+0.100, -0.050, both cells
+include zero). This is the opposite of the pattern in every single-agent
+paradigm that showed a label effect: there, naming induced or amplified
+an effect (conformity, framing, authority/obedience); here it suppresses
+one. Low-agreeableness is mostly null, with one clean exception:
+counterfactual-named shows a significant reversal, -0.300 [-0.49,-0.11],
+the model becoming more cautious after discussion, echoing the reversal
+pattern already seen for low-agreeableness under framing.
+
+**Caveat that qualifies the entire paradigm, not just one cell: this is
+predominantly convergence, not classical risky-shift extremification.**
+Only 13.3% of trials (16/120) show the post-discussion group ending up
+more risk-tolerant than every individual agent's round-0 answer, which
+is what Stoner's original finding actually describes. 14.2% (17/120)
+extremify in the opposite, risk-averse direction, almost exactly
+balancing the risky-direction cases. The remaining 74.2% (89/120) show
+the group settling somewhere within the range individuals already
+staked out. The mean-shift numbers above are real and, for none and
+high-agreeableness-blind, well-powered, but they should be described as
+convergence toward the more risk-tolerant pole of initial group opinion,
+not as a replication of group polarization's extremification-beyond-
+the-initial-range mechanism.
+
+## 13. Groupthink paradigm (multi-agent)
+
+Status: n=10 seeds, n=30 peer responses/cell (gpt-oss-120B only). A
+structurally different multi-agent design from risky shift: a leader's
+opening statement is scripted (matching Asch's scripted confederates,
+not a model call) and holds a planted, identifiable flaw in an
+attractive option constant across trials; two conditions vary only
+whether the leader states the option directively ("let's move forward")
+or neutrally ("I'm open to other views"). n_agents - 1 = 3 real peer
+agents then respond in sequence, each seeing the actual prior peers'
+choices and reasoning, and make a forced binary choice: go along (A) or
+raise the planted concern (B). Groupthink effect = P(raise concern |
+neutral) - P(raise concern | directive), expected positive. No precise
+meta-analytic baseline exists for this operationalization; the
+qualitative direction is established (Janis 1972; Leana 1985 directive-
+leadership studies), not a magnitude to replicate.
+
+A persona wording revision was necessary before this paradigm's results
+are interpretable: the project-wide low-agreeableness prompt
+("comfortable disagreeing with others") nearly paraphrases this
+paradigm's own outcome variable. Results below use the reworded,
+paradigm-specific personas (framed around epistemic motivation and
+benefit-of-the-doubt rather than social friction directly; see
+paradigms_multiagent/groupthink.py for the exact wording and an
+explicit caveat that this reduces but cannot fully remove the overlap,
+since agreeableness as a construct is partly defined by conflict-
+avoidance).
+
+| Domain | Label | high-agree. (dir.->neut.) | none (dir.->neut.) | low-agree. (dir.->neut.) |
+|---|---|---|---|---|
+| canonical | blind | 0.10 -> 0.27 | 0.80 -> 0.80 | 1.00 -> 1.00 |
+| canonical | named | 0.10 -> 0.37 | 1.00 -> 1.00 | 1.00 -> 1.00 |
+| counterfactual | blind | 0.10 -> 0.57 | 0.80 -> 1.00 | 1.00 -> 1.00 |
+| counterfactual | named | 0.30 -> 0.37 | 1.00 -> 1.00 | 1.00 -> 1.00 |
+
+Overall by persona (n=240 each): high-agreeableness 0.271 [21.9,33.0],
+none 0.925 [88.5,95.2], low-agreeableness 1.000 [98.4,100.0]. Pooled
+directive vs neutral across all cells: 0.683 [63.4,72.9] vs 0.781
+[73.5,82.0].
+
+**Persona-gated, like authority/obedience, not a clean failure like
+reciprocity or false consensus.** Low-agreeableness is a total, hard
+ceiling: 240/240 responses raise the objection, zero variance in every
+one of twelve cells, regardless of directive or neutral framing. This
+confirms the construct-level diagnosis rather than a wording artifact:
+no amount of rewording moved this persona off ceiling. None is
+near-ceiling in three of four domain-by-label cells (mostly 100%, one
+at 80%/80% with no gap) but shows a real difference in
+counterfactual-blind (0.80 -> 1.00). The directive-vs-neutral
+manipulation only has room to operate under high-agreeableness, and
+even there it is domain-and-label-inconsistent rather than generalizing
+cleanly: a clear, non-overlapping effect in counterfactual-blind (0.10
+[3,26] -> 0.57 [39,73]), a borderline one in canonical-named (0.10
+[3,26] -> 0.37 [22,54]), and weak-to-null effects in the remaining two
+cells. The pooled directive-vs-neutral gap across the whole grid (68.3%
+vs 78.1%, CIs barely separating) is being generated almost entirely by
+high-agreeableness's cells; none and low-agreeableness contribute
+essentially nothing to it. A second, distinct explanation likely
+compounds the persona-construct issue: the planted flaws are stated
+fairly explicitly in each item ("the due-diligence memo flags an
+unresolved risk that has not been addressed"), which may push the
+baseline objection rate toward ceiling for any reasonably-aligned model
+regardless of leadership framing, leaving little room for the
+manipulation to move behavior except where a strong compliance-pulling
+persona pulls the baseline down first.
+
 ## Caveats and planned follow-ups
 
 - **Reciprocity and false consensus results are not yet included above.**
@@ -432,7 +551,7 @@ one cell rather than being a general property of the paradigm.
   across models. The net-effect calculation (conformity rate minus solo
   error rate) partially controls for this but does not fully rule out an
   ability confound in the domain-generalization comparison above.
-  - **Authority/obedience has no genuine replication baseline.** The
+- **Authority/obedience has no genuine replication baseline.** The
   ~65-70pp figure cited is transferred from Milgram's shock paradigm
   and Burger's partial replication, not measured on any text-based
   workplace-compliance analog; treat the human comparison as
